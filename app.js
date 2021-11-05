@@ -9,14 +9,15 @@ run()
 
 async function run() {
   await connection.connect()
-  await connection.get().createCollection('users')
   await connection.get().dropCollection('users')
+  await connection.get().createCollection('users')
   userCollection = connection.get().collection('users')
 
   await example1()
   await example2()
   await example3()
   await example4()
+  console.log('111');
   await connection.close()
 }
 
