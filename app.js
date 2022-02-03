@@ -17,7 +17,6 @@ async function run() {
   await example2()
   await example3()
   await example4()
-  console.log('111');
   await connection.close()
 }
 
