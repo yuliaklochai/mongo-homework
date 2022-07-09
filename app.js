@@ -26,18 +26,18 @@ async function run() {
 
 //Users
 
-  await example1();
-  await example2();
-  await example3();
-  await example4();
+  // await example1();
+  // await example2();
+  // await example3();
+  // await example4();
 
 //Articles
 
-  // await example5();
-  // await example6();
-  // await example7();
-  // await example8();
-  // await example9();
+  await example5();
+  await example6();
+  await example7();
+  await example8();
+  await example9();
 
 //Students
 
@@ -148,7 +148,7 @@ async function example7() {
     await articlesCollection.updateMany(
       {type: {$ne: 'a'}},
       {
-        $set: {tags: ['tag2', 'tag3', 'super']}
+        $push: { tags: {$each: ['tag2', 'tag3', 'super']}}
       }
     );
   } catch (err) {
@@ -219,13 +219,13 @@ async function example12() {
       },
       {$unwind: {path: '$scores'}},
       {
-        $match: {
+        $match: {  
           $or: [
             {
-              $and: [{$expr: {$eq: ['$scores.score', '$maxScore']}}, {'scores.type': 'quiz'}]
+              $and: [{$expr: {$eq: ['$scores.score', '$maxScore']}}, {'scores.type': 'quiz'}] //check if the student got max score for quiz (among all 3 tasks = quiz, homework, exam)
             },
             {
-              $and: [{$expr: {$eq: ['$scores.score', '$minScore']}}, {'scores.type': 'homework'}]
+              $and: [{$expr: {$eq: ['$scores.score', '$minScore']}}, {'scores.type': 'homework'}] //check if the student got inx score for quiz
             }
           ]
         }
@@ -242,7 +242,7 @@ async function example12() {
         }
       },
       {
-        $match: {
+        $match: {  //return only those students who have both max score for quiz and min score for homework
           scores: {$size: 2}
         }
       },
@@ -279,7 +279,7 @@ async function example13() {
       {$unwind: {path: '$scores'}},
       {
         $match: {
-          $and: [{$expr: {$gt: ['$scores.score', '$minScore']}}, {'scores.type': {$ne: 'homework'}}]
+          $and: [{$expr: {$gt: ['$scores.score', '$minScore']}}, {'scores.type': {$ne: 'homework'}}] //choose only quiz and exam assignments, that bigger than min score of student (as we have only three, it's enough to specify that scores.type not equal to homework)
         }
       },
       {
@@ -370,7 +370,7 @@ async function example16() {
       ])
       .toArray();
     const studentsID = studentsList.map(stud => stud._id);
-    await studentsCollection.updateMany({_id: {$in: studentsID}}, {$set: {quizScoreGt80: true}});
+    await studentsCollection.updateMany({_id: {$in: studentsID}}, {$set: {quizScoreGte80: true}});
   } catch (err) {
     console.error(err);
   }
